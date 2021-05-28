@@ -1,0 +1,8 @@
+#1
+# Evaluation 15
+double bestTuners(2,1)
+      9.3447614108444039e+00
+      9.9801268771151399e+00
+
+double bestCriteria(1,1)
+      1.8445840206041157e+03

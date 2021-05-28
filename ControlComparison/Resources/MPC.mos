@@ -1,0 +1,30 @@
+﻿//timestep,s
+timestep=5
+
+//Initialize the state at the first time step (prepare dsfinal_0.txt)
+importInitial("dsfinal_0.txt");
+
+for i in 1:5 loop
+  //Optimization
+  ControlComparison.Optimization.SimpleExample.runExample01(startTime=timestep*(i-1),stopTime=timestep*i);
+  
+  //Get the optimized parameters
+  Lines=Modelica.Utilities.Streams.readFile("OptimizationBest.txt");
+  alin=Lines[4];
+  blin=Lines[5];
+  aopt=Modelica.Utilities.Strings.scanReal(alin);
+  bopt=Modelica.Utilities.Strings.scanReal(blin);
+  
+  // Load initial values with dsfinal_1.txt values (state rollback)
+  importInitial("dsfinal_"+String(i-1)+".txt");
+  
+  // Simulate the model and save the result
+  simulateExtendedModel("ControlComparison.Optimization.SimpleExample.Model02",initialNames={"a","b"},
+  initialValues={aopt, bopt},startTime=timestep*(i-1),stopTime=timestep*i,resultFile = "dsres"+String(i));
+  
+  // Save the state
+  system("copy dsfinal.txt dsfinal_"+String(i)+".txt");
+end for;
+
+
+
