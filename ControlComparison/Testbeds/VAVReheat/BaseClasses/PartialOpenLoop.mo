@@ -6,7 +6,14 @@ partial model PartialOpenLoop
   package MediumW = Buildings.Media.Water "Medium model for water";
 
   constant Integer numZon=5 "Total number of served VAV boxes";
-
+  parameter Modelica.SIunits.ThermalConductance UA_nominal(min=0)=
+        -designCoolLoad/Buildings.Fluid.HeatExchangers.BaseClasses.lmtd(
+        T_a1=26.2,
+        T_b1=12.8,
+        T_a2=6,
+        T_b2=12)
+    "Thermal conductance at nominal flow, used to compute heat capacity"
+    annotation (Dialog(tab="General", group="Nominal condition"));
   parameter Modelica.SIunits.Volume VRooCor=AFloCor*flo.hRoo
     "Room volume corridor";
   parameter Modelica.SIunits.Volume VRooSou=AFloSou*flo.hRoo
@@ -68,6 +75,10 @@ partial model PartialOpenLoop
     annotation (Evaluate=true, Dialog(tab=
           "Experimental (may be changed in future releases)"));
 
+  // sizing parameter
+  parameter Modelica.SIunits.HeatFlowRate designCoolLoad = -m_flow_nominal*1000*15 "Design cooling load";
+  parameter Modelica.SIunits.HeatFlowRate designHeatLoad = 0.6*m_flow_nominal*1006*(18 - 8) "Design heating load";
+
   Buildings.Fluid.Sources.Outside amb(redeclare package Medium = MediumA,
       nPorts=3) "Ambient conditions"
     annotation (Placement(transformation(extent={{-136,-56},{-114,-34}})));
@@ -92,11 +103,11 @@ partial model PartialOpenLoop
   Buildings.Fluid.HeatExchangers.DryCoilEffectivenessNTU heaCoi(
     redeclare package Medium1 = MediumW,
     redeclare package Medium2 = MediumA,
-    m1_flow_nominal=m_flow_nominal*1000*(10 - (-20))/4200/10,
-    m2_flow_nominal=m_flow_nominal,
+    m1_flow_nominal=designHeatLoad/4200/5,
+    m2_flow_nominal=0.6*m_flow_nominal,
     configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
-    Q_flow_nominal=m_flow_nominal*1006*(16.7 - 8.5),
-    dp1_nominal=0,
+    Q_flow_nominal=designHeatLoad,
+    dp1_nominal=30000,
     dp2_nominal=200 + 200 + 100 + 40,
     allowFlowReversal1=false,
     allowFlowReversal2=allowFlowReversal,
@@ -105,18 +116,13 @@ partial model PartialOpenLoop
     annotation (Placement(transformation(extent={{118,-36},{98,-56}})));
 
   Buildings.Fluid.HeatExchangers.WetCoilCounterFlow cooCoi(
-    UA_nominal=3*m_flow_nominal*1000*15/
-        Buildings.Fluid.HeatExchangers.BaseClasses.lmtd(
-        T_a1=26.2,
-        T_b1=12.8,
-        T_a2=6,
-        T_b2=16),
+    UA_nominal=UA_nominal,
     redeclare package Medium1 = MediumW,
     redeclare package Medium2 = MediumA,
-    m1_flow_nominal=m_flow_nominal*1000*15/4200/10,
+    m1_flow_nominal=-designCoolLoad/4200/6,
     m2_flow_nominal=m_flow_nominal,
     dp2_nominal=0,
-    dp1_nominal=0,
+    dp1_nominal=30000,
     energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
     allowFlowReversal1=false,
     allowFlowReversal2=allowFlowReversal) "Cooling coil"
@@ -125,13 +131,15 @@ partial model PartialOpenLoop
     m_flow_nominal=m_flow_nominal,
     redeclare package Medium = MediumA,
     allowFlowReversal=allowFlowReversal,
-    dp_nominal=40) "Pressure drop for return duct"
+    dp_nominal=490)
+                   "Pressure drop for return duct"
     annotation (Placement(transformation(extent={{400,130},{380,150}})));
   Buildings.Fluid.Movers.SpeedControlled_y fanSup(
     redeclare package Medium = MediumA,
-    per(pressure(V_flow={0,m_flow_nominal/1.2*2}, dp=2*{780 + 10 + dpBuiStaSet,
-            0})),
-    energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial) "Supply air fan"
+    per(pressure(V_flow=m_flow_nominal/1.2*{0.2,0.6,1.0,1.2}, dp=(1030 + 220 +
+            10 + 20 + dpBuiStaSet)*{1.2,1.1,1.0,0.6})),
+    energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
+    addPowerToMedium=false) "Supply air fan"
     annotation (Placement(transformation(extent={{300,-50},{320,-30}})));
 
   Buildings.Fluid.Sensors.VolumeFlowRate senSupFlo(redeclare package Medium =
@@ -147,7 +155,7 @@ partial model PartialOpenLoop
   Buildings.Fluid.Sources.Boundary_pT sinHea(
     redeclare package Medium = MediumW,
     p=300000,
-    T=318.15,
+    T=313.15,
     nPorts=1) "Sink for heating coil" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=90,
@@ -552,11 +560,11 @@ protected
 
   end Results;
 public
-  Buildings.Controls.OBC.CDL.Continuous.Gain gaiHeaCoi(k=m_flow_nominal*1000*40
-        /4200/10) "Gain for heating coil mass flow rate"
+  Buildings.Controls.OBC.CDL.Continuous.Gain gaiHeaCoi(k=designHeatLoad/4200/5)
+                  "Gain for heating coil mass flow rate"
     annotation (Placement(transformation(extent={{100,-220},{120,-200}})));
-  Buildings.Controls.OBC.CDL.Continuous.Gain gaiCooCoi(k=m_flow_nominal*1000*15
-        /4200/10) "Gain for cooling coil mass flow rate"
+  Buildings.Controls.OBC.CDL.Continuous.Gain gaiCooCoi(k=-designCoolLoad/4200/6)
+                  "Gain for cooling coil mass flow rate"
     annotation (Placement(transformation(extent={{100,-258},{120,-238}})));
   Buildings.Controls.OBC.CDL.Logical.OnOffController freSta(bandwidth=1)
     "Freeze stat for heating coil"

@@ -629,7 +629,6 @@ block Controller
 
   ControlComparison.Testbeds.VAVReheat.Controls.SupplyTemperature
     supTemSetPoi(
-    useMPC=true,
     final samplePeriod=samplePeriod,
     final TSupSetMin=TSupSetMin,
     final TSupSetMax=TSupSetMax,

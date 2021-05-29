@@ -2,7 +2,12 @@ within ControlComparison.Testbeds.VAVReheat;
 model Guideline36MPC
   "Variable air volume flow system with terminal reheat and five thermal zones"
   extends Modelica.Icons.Example;
-  extends ControlComparison.Testbeds.VAVReheat.BaseClasses.PartialOpenLoop;
+  extends ControlComparison.Testbeds.VAVReheat.BaseClasses.PartialOpenLoop(flo(
+      cor(T_start=273.15 + 24),
+      eas(T_start=273.15 + 24),
+      sou(T_start=273.15 + 24),
+      wes(T_start=273.15 + 24),
+      nor(T_start=273.15 + 24)));
 
   parameter Modelica.SIunits.VolumeFlowRate VPriSysMax_flow=m_flow_nominal/1.2
     "Maximum expected system primary airflow rate at design stage";
@@ -17,27 +22,47 @@ model Guideline36MPC
   Buildings.Controls.OBC.ASHRAE.G36_PR1.TerminalUnits.Controller conVAVCor(
     V_flow_nominal=mCor_flow_nominal/1.2,
     AFlo=AFloCor,
-    final samplePeriod=samplePeriod) "Controller for terminal unit corridor"
+    final samplePeriod=samplePeriod,
+    VDisSetMin_flow=0.05*conVAVCor.V_flow_nominal,
+    VDisConMin_flow=0.05*conVAVCor.V_flow_nominal,
+    errTZonCoo_1=0.8,
+    errTZonCoo_2=0.4)                "Controller for terminal unit corridor"
     annotation (Placement(transformation(extent={{530,32},{550,52}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.TerminalUnits.Controller conVAVSou(
     V_flow_nominal=mSou_flow_nominal/1.2,
     AFlo=AFloSou,
-    final samplePeriod=samplePeriod) "Controller for terminal unit south"
+    final samplePeriod=samplePeriod,
+    VDisSetMin_flow=0.05*conVAVSou.V_flow_nominal,
+    VDisConMin_flow=0.05*conVAVSou.V_flow_nominal,
+    errTZonCoo_1=0.8,
+    errTZonCoo_2=0.4)                "Controller for terminal unit south"
     annotation (Placement(transformation(extent={{700,30},{720,50}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.TerminalUnits.Controller conVAVEas(
     V_flow_nominal=mEas_flow_nominal/1.2,
     AFlo=AFloEas,
-    final samplePeriod=samplePeriod) "Controller for terminal unit east"
+    final samplePeriod=samplePeriod,
+    VDisSetMin_flow=0.05*conVAVEas.V_flow_nominal,
+    VDisConMin_flow=0.05*conVAVEas.V_flow_nominal,
+    errTZonCoo_1=0.8,
+    errTZonCoo_2=0.4)                "Controller for terminal unit east"
     annotation (Placement(transformation(extent={{880,30},{900,50}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.TerminalUnits.Controller conVAVNor(
     V_flow_nominal=mNor_flow_nominal/1.2,
     AFlo=AFloNor,
-    final samplePeriod=samplePeriod) "Controller for terminal unit north"
+    final samplePeriod=samplePeriod,
+    VDisSetMin_flow=0.05*conVAVNor.V_flow_nominal,
+    VDisConMin_flow=0.05*conVAVNor.V_flow_nominal,
+    errTZonCoo_1=0.8,
+    errTZonCoo_2=0.4)                "Controller for terminal unit north"
     annotation (Placement(transformation(extent={{1040,30},{1060,50}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.TerminalUnits.Controller conVAVWes(
     V_flow_nominal=mWes_flow_nominal/1.2,
     AFlo=AFloWes,
-    final samplePeriod=samplePeriod) "Controller for terminal unit west"
+    final samplePeriod=samplePeriod,
+    VDisSetMin_flow=0.05*conVAVWes.V_flow_nominal,
+    VDisConMin_flow=0.05*conVAVWes.V_flow_nominal,
+    errTZonCoo_1=0.8,
+    errTZonCoo_2=0.4)                "Controller for terminal unit west"
     annotation (Placement(transformation(extent={{1240,28},{1260,48}})));
   Modelica.Blocks.Routing.Multiplex5 TDis "Discharge air temperatures"
     annotation (Placement(transformation(extent={{220,270},{240,290}})));
@@ -79,7 +104,9 @@ model Guideline36MPC
     final pMaxSet=410,
     final yFanMin=yFanMin,
     final VPriSysMax_flow=VPriSysMax_flow,
-    final peaSysPop=1.2*sum({0.05*AFlo[i] for i in 1:numZon})) "AHU controller"
+    final peaSysPop=1.2*sum({0.05*AFlo[i] for i in 1:numZon}),
+    kTSup=0.1,
+    TiTSup=120)                                                "AHU controller"
     annotation (Placement(transformation(extent={{340,512},{420,640}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.AHUs.MultiZone.VAV.SetPoints.OutdoorAirFlow.Zone
     zonOutAirSet[numZon](
@@ -136,10 +163,10 @@ equation
           94},{1032,34},{1038,34}}, color={0,0,127}));
   connect(TSupWes.T, conVAVWes.TDis) annotation (Line(points={{1289,90},{1228,
           90},{1228,32},{1238,32}}, color={0,0,127}));
-  connect(cor.yVAV, conVAVCor.yDam) annotation (Line(points={{566,50},{556,50},{
-          556,48},{552,48}}, color={0,0,127}));
-  connect(cor.yVal, conVAVCor.yVal) annotation (Line(points={{566,34},{560,34},{
-          560,43},{552,43}}, color={0,0,127}));
+  connect(cor.yVAV, conVAVCor.yDam) annotation (Line(points={{566,50},{556,50},
+          {556,48},{552,48}},color={0,0,127}));
+  connect(cor.yVal, conVAVCor.yVal) annotation (Line(points={{566,34},{560,34},
+          {560,43},{552,43}},color={0,0,127}));
   connect(conVAVSou.yDam, sou.yVAV) annotation (Line(points={{722,46},{730,46},{
           730,48},{746,48}}, color={0,0,127}));
   connect(conVAVSou.yVal, sou.yVal) annotation (Line(points={{722,41},{732.5,41},
