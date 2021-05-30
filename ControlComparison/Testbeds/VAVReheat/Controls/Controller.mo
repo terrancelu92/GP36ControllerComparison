@@ -374,6 +374,9 @@ block Controller
     "Lower limit of controller signal when cooling coil is off. Require -1 < uHeaMax < uCooMin < 1."
     annotation (Dialog(group="Supply air temperature"));
 
+  parameter Boolean useMPC=false "Boolean flag to activate the MPC fixed supply
+  air temperature" annotation (Dialog(tab="Supply air temperature",group="MPC activate"));
+
   Buildings.Controls.OBC.CDL.Interfaces.RealInput TZonHeaSet(
     final unit="K",
     final displayUnit="degC",
@@ -629,6 +632,7 @@ block Controller
 
   ControlComparison.Testbeds.VAVReheat.Controls.SupplyTemperature
     supTemSetPoi(
+    useMPC=useMPC,
     final samplePeriod=samplePeriod,
     final TSupSetMin=TSupSetMin,
     final TSupSetMax=TSupSetMax,
@@ -686,6 +690,7 @@ block Controller
     final uHeaMax=uHeaMax,
     final uCooMin=uCooMin) "AHU coil valve control"
     annotation (Placement(transformation(extent={{80,-70},{100,-50}})));
+
 
 protected
   Buildings.Controls.OBC.CDL.Continuous.Division VOut_flow_normalized(
