@@ -1,14 +1,26 @@
-function OptimizationLastRunModel
-/* Automatically generated at Fri May 28 16:17:33 2021 */
+within ControlComparison.Optimization.Airside;
+function SupplyAirTemperatureOptimization
+  import Optimization;
+  extends Optimization.Internal.Icons.ExampleFunction;
+  /*
+ 
+2 Tuners (a, b), start values = {5, 1}
+Box constraints: {-10 ... 10, -10 ... 10}
+1  Criterion (y)
+ 
+Optimal Solution = {4, 2}
+Criterion at solution = {0}
+ 
+ */
+  input Boolean interactive=false annotation(Dialog(tab="Advanced"));
+  input Real startTime;
+  input Real stopTime;
+  output Boolean runOK annotation(Dialog(tab="Advanced", group="Output"));
 
-/* This function needs Optimization library 2.2.3 or higher */
-
-    input Boolean interactive=true annotation(Dialog(tab="Advanced"));
-    output Boolean runOK annotation(Dialog(tab="Advanced", group="Output"));
 protected
     Optimization.Internal.Version.V22.ModelOptimizationSetup setup=
         Optimization.Internal.Version.V22.ModelOptimizationSetup(
-            modelName="ControlComparison.Optimization.SimpleExample.Model02",
+            modelName="ControlComparison.Testbeds.VAVReheat.Guideline36MPC",
             plotScript="",
             saveSetup=true,
             saveSetupFilename="OptimizationLastRunModel.mo",
@@ -18,45 +30,37 @@ protected
                 Optimization.Internal.Version.V22.Tuner(
                     UseTunerMatrixForDiscreteValues=false,
                     tunerParameters=
-                        {
-                            Optimization.Internal.Version.V22.TunerParameter(
-                                name="a",
+                        {   Optimization.Internal.Version.V22.TunerParameter(
+                                name="conAHU.TSupSetOcc",
                                 active=true,
-                                Value=5,
-                                min=-10,
-                                max=10,
+                                Value=291.15,
+                                min=285.15,
+                                max=291.15,
                                 equidistant=0,
                                 scaleToBounds=false,
                                 discreteValues=fill(0,0),
-                                unit=""),
-                            Optimization.Internal.Version.V22.TunerParameter(
-                                name="b",
-                                active=true,
-                                Value=1,
-                                min=-10,
-                                max=10,
-                                equidistant=0,
-                                scaleToBounds=false,
-                                discreteValues=fill(0,0),
-                                unit="")
-                        },
+                                unit="K")},
                     tunerMatrix=
                         zeros(0,2)),
             criteria=
-                {
-                    Optimization.Internal.Version.V22.Criterion(
-                        name="y",
+                {   Optimization.Internal.Version.V22.Criterion(
+                        name="eleTotInt.y",
                         active=true,
                         usage=Optimization.Internal.Version.V22.Types.CriterionUsage.Minimize,
                         demand=1,
-                        unit="")
-                },
+                        unit=""),
+                        Optimization.Internal.Version.V22.Criterion(
+                        name="TAirTotDev.y",
+                        active=true,
+                        usage=Optimization.Internal.Version.V22.Types.CriterionUsage.Minimize,
+                        demand=4E-05,
+                        unit="")},
             preferences=
                 Optimization.Internal.Version.V22.Preferences(
                     optimizationOptions=
                         Optimization.Internal.Version.V22.OptimizationOptions(
-                            method=Optimization.Internal.Version.V22.Types.OptimizationMethod.sqp,
-                            ObjectiveFunctionType=Optimization.Internal.Version.V22.Types.ObjectiveFunctionType.Max,
+                            method=Optimization.Internal.Version.Current.Types.OptimizationMethod.simsa,
+                            ObjectiveFunctionType=Optimization.Internal.Version.Current.Types.ObjectiveFunctionType.SumAbs,
                             OptTol=9.9999999999999995e-7,
                             maxEval=1000,
                             evalBestFinal=false,
@@ -74,8 +78,8 @@ protected
                             GridBlock=50),
                     simulationOptions=
                         Optimization.Internal.Version.V22.SimulationOptions(
-                            startTime=20,
-                            stopTime=25,
+                            startTime=startTime,
+                            stopTime=stopTime,
                             outputInterval=0,
                             numberOfIntervals=500,
                             integrationMethod=Optimization.Internal.Version.V22.Types.IntegrationMethod.Dassl,
@@ -95,9 +99,22 @@ protected
                         Optimization.Internal.Version.V22.SensitivityOptions(
                             TypeOfSensitivityComputation=Optimization.Internal.Version.V22.Types.SensitivityMethod.ExternalDifferencesSymmetric,
                             automaticSensitivityTolerance=true,
-                            sensitivityTolerance=9.9999999999999995e-7)))
-    ;
+                            sensitivityTolerance=9.9999999999999995e-7)));
 algorithm
     runOK := Optimization.Tasks.ModelOptimization.run22(setup, interactive);
-    annotation(__Dymola_interactive=true);
-end OptimizationLastRunModel;
+  annotation (preferedView="info", Documentation(info="<html>
+<p>
+This example demonstrates a model optimization problem with<br>
+<br>
+2 Tuners, start values = {5, 1}, Box constraints: -10 ... 10<br>
+1  Criterion to be minimized<br>
+<br> 
+Optimal Solution = {4,2}<br>
+Criteria at solution = {0}<br>
+<br>
+The goal of the optimization is to fit the signal of Model01.x to that of Model01.z by tuning the model parameters
+Model01.a and Model01.b.
+</p>
+</html>
+"),          __Dymola_interactive=false);
+end SupplyAirTemperatureOptimization;

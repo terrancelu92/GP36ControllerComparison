@@ -12,7 +12,7 @@ Optimal Solution = {4, 2}
 Criterion at solution = {0}
  
  */
-  input Boolean interactive=false annotation(Dialog(tab="Advanced"));
+  input Boolean interactive=true annotation(Dialog(tab="Advanced"));
   input Real startTime;
   input Real stopTime;
   output Boolean runOK annotation(Dialog(tab="Advanced", group="Output"));

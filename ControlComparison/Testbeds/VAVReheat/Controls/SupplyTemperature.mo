@@ -11,10 +11,10 @@ block SupplyTemperature
   parameter Real TSupSetOcc(
     final unit="K",
     final displayUnit="degC",
-    final quantity="ThermodynamicTemperature") = 18+273.15
+    final quantity="ThermodynamicTemperature")
     "Fixed supply air temperature setpoint when MPC is activated"
     annotation (Dialog(group="Temperatures"));
-  parameter Boolean useMPC = false "Boolean flag to activate the MPC fixed supply
+  parameter Boolean useMPC "Boolean flag to activate the MPC fixed supply
   air temperature";
   parameter Real TSupSetMax(
     final unit="K",
