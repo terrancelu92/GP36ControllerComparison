@@ -243,6 +243,16 @@ block Controller
   parameter Real yFanMin=0.1 "Lowest allowed fan speed if fan is on"
     annotation (Dialog(group="Fan speed PID controller"));
 
+  parameter Real dpStaSet(
+    final unit="Pa",
+    final displayUnit="Pa",
+    final quantity="PressureDifference")=50
+    "Fixed supply air temperature setpoint when MPC is activated"
+  annotation (Dialog(tab="Fan speed"));
+  parameter Boolean useMPCdpSet
+    "Boolean flag to activate the MPC fixed duct static pressure"
+   annotation (Dialog(tab="Fan speed"));
+
   // ----------- parameters for minimum outdoor airflow setting  -----------
   parameter Real VPriSysMax_flow(
     final unit="m3/s",
@@ -374,7 +384,7 @@ block Controller
     "Lower limit of controller signal when cooling coil is off. Require -1 < uHeaMax < uCooMin < 1."
     annotation (Dialog(group="Supply air temperature"));
 
-  parameter Boolean useMPC "Boolean flag to activate the MPC fixed supply
+  parameter Boolean useMPCTSup "Boolean flag to activate the MPC fixed supply
   air temperature" annotation (Dialog(tab="Supply air temperature",group="MPC activate"));
 
   parameter Real TSupSetOcc=18 + 273.15
@@ -611,7 +621,7 @@ block Controller
     "Average of all zone set points"
     annotation (Placement(transformation(extent={{-160,270},{-140,290}})));
 
-  Buildings.Controls.OBC.ASHRAE.G36_PR1.AHUs.MultiZone.VAV.SetPoints.SupplyFan
+   ControlComparison.Testbeds.VAVReheat.Controls.SupplyFanMPC
     supFan(
     final samplePeriod=samplePeriod,
     final have_perZonRehBox=have_perZonRehBox,
@@ -630,14 +640,16 @@ block Controller
     final Ti=TiFanSpe,
     final Td=TdFanSpe,
     final yFanMax=yFanMax,
-    final yFanMin=yFanMin)
+    final yFanMin=yFanMin,
+    dpStaSet=dpStaSet,
+    useMPC=useMPCdpSet)
     "Supply fan controller"
     annotation (Placement(transformation(extent={{-160,200},{-140,220}})));
 
   ControlComparison.Testbeds.VAVReheat.Controls.SupplyTemperature
     supTemSetPoi(
     TSupSetOcc=TSupSetOcc,
-    useMPC=useMPC,
+    useMPC=useMPCTSup,
     final samplePeriod=samplePeriod,
     final TSupSetMin=TSupSetMin,
     final TSupSetMax=TSupSetMax,
@@ -695,8 +707,6 @@ block Controller
     final uHeaMax=uHeaMax,
     final uCooMin=uCooMin) "AHU coil valve control"
     annotation (Placement(transformation(extent={{80,-70},{100,-50}})));
-
-
 
 protected
   Buildings.Controls.OBC.CDL.Continuous.Division VOut_flow_normalized(
