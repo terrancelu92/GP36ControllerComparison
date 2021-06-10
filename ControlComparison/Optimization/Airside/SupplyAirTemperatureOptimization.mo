@@ -59,7 +59,7 @@ protected
                 Optimization.Internal.Version.V22.Preferences(
                     optimizationOptions=
                         Optimization.Internal.Version.V22.OptimizationOptions(
-                            method=Optimization.Internal.Version.Current.Types.OptimizationMethod.simsa,
+                            method=Optimization.Internal.Version.Current.Types.OptimizationMethod.random,
                             ObjectiveFunctionType=Optimization.Internal.Version.Current.Types.ObjectiveFunctionType.SumAbs,
                             OptTol=9.9999999999999995e-7,
                             maxEval=1000,
@@ -82,7 +82,7 @@ protected
                             stopTime=stopTime,
                             outputInterval=0,
                             numberOfIntervals=500,
-                            integrationMethod=Optimization.Internal.Version.V22.Types.IntegrationMethod.Dassl,
+                            integrationMethod=Optimization.Internal.Version.V22.Types.IntegrationMethod.Cvode,
                             integrationTolerance=9.9999999999999995e-7,
                             fixedStepSize=0,
                             autoLoadResults=true,
@@ -90,7 +90,7 @@ protected
                             translateModel=false,
                             setCriteriaSimulationFailed=true,
                             CriteriaSimulationFailedValue=1e+6,
-                            simulationMode=Optimization.Internal.Version.V22.Types.SimulationMode.Multi,
+                            simulationMode=Optimization.Internal.Version.V22.Types.SimulationMode.Single,
                             parallelizationMode=Optimization.Internal.Version.V22.Types.ParallelizationMode.None,
                             numberOfThreads=0,
                             copyFiles=

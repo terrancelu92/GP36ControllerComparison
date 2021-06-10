@@ -1,11 +1,13 @@
 ﻿//timestep,s
 timestep=120*60;
 //simulation duration,s
-duration=12*3600; //+4*24*3600;
+duration=14*3600+6*24*3600+3600;
 steps=integer(duration/timestep);
 
 //starttime base,s
-startTime_base=15577200;
+startTime_base=17643600; //startTime_base=15577200
+endTime=startTime_base+duration;
+
 
 //Initialize the state at the first time step (prepare dsfinal_0.txt)
 importInitial("dsfinal_0.txt");
@@ -27,8 +29,10 @@ for i in 1:steps loop
   
   // Simulate the model and save the result
   simulateExtendedModel("ControlComparison.Testbeds.VAVReheat.Guideline36MPC",initialNames={"conAHU.TSupSetOcc"},
-  initialValues={TSupopt},startTime=startTime_base+timestep*(i-1),stopTime=startTime_base+timestep*i,
+  initialValues={TSupopt},startTime=startTime_base+timestep*(i-1),stopTime=startTime_base+timestep*i, method="Cvode",
   tolerance=1e-6,resultFile = "dsres"+String(i));
+  
+  //simulateModel("ControlComparison.Testbeds.VAVReheat.Guideline36MPC",startTime=startTime_base,stopTime=endTime,method="Cvode",tolerance=1e-6,resultFile = "dsresGDL36Coo");
   
   // Save the state
   system("copy dsfinal.txt dsfinal_"+String(i)+".txt");
@@ -36,7 +40,7 @@ end for;
 
 
 //The outputs that need to be extracted
-dataNames={"Time","conAHU.TSup","conAHU.TSupSet","eleTotInt.y","TAirTotDev.y"}
+dataNames={"Time","conAHU.TSup","conAHU.TSupSet","eleTotInt.y","TAirTotDev.y","eleTot.u[2]","eleTot.u[3]"}
 
 //dataNames_tmp=DymolaCommands.Trajectories.readTrajectoryNames("dsres1.mat");
 dataSize_tmp=DymolaCommands.Trajectories.readTrajectorySize("dsres1.mat");

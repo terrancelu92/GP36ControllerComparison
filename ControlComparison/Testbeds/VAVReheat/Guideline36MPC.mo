@@ -112,9 +112,9 @@ model Guideline36MPC
     final yFanMin=yFanMin,
     final VPriSysMax_flow=VPriSysMax_flow,
     final peaSysPop=1.2*sum({0.05*AFlo[i] for i in 1:numZon}),
-    kTSup=0.01,
+    kTSup=0.1,
     TiTSup=120,
-    useMPC=true)                                               "AHU controller"
+    useMPC=false)                                              "AHU controller"
     annotation (Placement(transformation(extent={{340,514},{420,642}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.AHUs.MultiZone.VAV.SetPoints.OutdoorAirFlow.Zone
     zonOutAirSet[numZon](
@@ -536,8 +536,9 @@ This is for
           "modelica://Buildings/Resources/Scripts/Dymola/Examples/VAVReheat/Guideline36.mos"
         "Simulate and plot"),
     experiment(
-      StartTime=15552000,
-      StopTime=15577200,
-      __Dymola_Algorithm="Dassl"),
+      StartTime=17643600,
+      StopTime=18212400,
+      Tolerance=1e-06,
+      __Dymola_Algorithm="Cvode"),
     Icon(coordinateSystem(extent={{-100,-100},{100,100}})));
 end Guideline36MPC;
