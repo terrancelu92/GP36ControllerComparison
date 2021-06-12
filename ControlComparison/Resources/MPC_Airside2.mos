@@ -1,11 +1,11 @@
 ﻿//timestep,s
-timestep=240*60;
+timestep=30*60;
 //simulation duration,s
-duration=12*3600;  //14*3600+6*24*3600+3600;
+duration=14*3600+6*24*3600+3600;   //12*3600
 steps=integer(duration/timestep);
 
 //starttime base,s
-startTime_base=15577200; //startTime_base=17643600; 
+startTime_base=17643600; //startTime_base=15577200; 
 endTime=startTime_base+duration;
 
 
