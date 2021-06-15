@@ -1,11 +1,11 @@
 ﻿//timestep,s
-timestep=30*60;
+timestep=120*60;
 //simulation duration,s
 duration=14*3600+6*24*3600+3600;   //12*3600
 steps=integer(duration/timestep);
 
-//starttime base,s
-startTime_base=17643600; //startTime_base=15577200; 
+//starttime base,s; Cooling week 17643600s (4901d-5060d); Shoulder week 13755600s (3821d-3980d)
+startTime_base=17643600; //startTime_base=13755600;                                 
 endTime=startTime_base+duration;
 
 
