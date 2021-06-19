@@ -108,14 +108,15 @@ model Guideline36MPC
     "Replicate real input"
     annotation (Placement(transformation(extent={{-120,320},{-100,340}})));
   ControlComparison.Testbeds.VAVReheat.Controls.Controller conAHU(
+    kMinOut=0.01,
     final pMaxSet=410,
     final yFanMin=yFanMin,
-    useMPCdpSet=true,
+    useMPCdpSet=false,
     final VPriSysMax_flow=VPriSysMax_flow,
     final peaSysPop=1.2*sum({0.05*AFlo[i] for i in 1:numZon}),
-    kTSup=0.1,
+    kTSup=0.01,
     TiTSup=120,
-    useMPCTSup=true)  "AHU controller"
+    useMPCTSup=false) "AHU controller"
     annotation (Placement(transformation(extent={{340,514},{420,642}})));
   Buildings.Controls.OBC.ASHRAE.G36_PR1.AHUs.MultiZone.VAV.SetPoints.OutdoorAirFlow.Zone
     zonOutAirSet[numZon](
@@ -537,8 +538,8 @@ This is for
           "modelica://Buildings/Resources/Scripts/Dymola/Examples/VAVReheat/Guideline36.mos"
         "Simulate and plot"),
     experiment(
-      StartTime=17622000,
-      StopTime=17643600,
+      StartTime=259200,
+      StopTime=864000,
       Tolerance=1e-06,
       __Dymola_Algorithm="Cvode"),
     Icon(coordinateSystem(extent={{-100,-100},{100,100}})));
