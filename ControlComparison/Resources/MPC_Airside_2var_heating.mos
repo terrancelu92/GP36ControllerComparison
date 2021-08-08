@@ -1,5 +1,5 @@
 ﻿//timestep,s
-timestep=240*60;
+timestep=30*60;
 //simulation duration,s
 duration=14*3600+6*24*3600+3600;   //12*3600
 steps=integer(duration/timestep);
@@ -42,7 +42,7 @@ end for;
 
 
 //The outputs that need to be extracted
-dataNames={"Time","conAHU.TSup","conAHU.TSupSet","sitEneTotInt.y","gasTotInt.y","eleTotInt.y","TAirTotDev.y","eleTot.u[1]","eleTot.u[2]","conAHU.dpStaSet","conAHU.ducStaPre",
+dataNames={"Time","conAHU.TSup","conAHU.TSupSet","sitEneTotInt.y","gasTotInt.y","eleTotInt.y","TAirTotDev.y","eleTot.u[1]","eleTot.u[2]","gasTotInt.u","conAHU.dpStaSet","conAHU.ducStaPre",
 "flo.temAirSou.T","flo.temAirEas.T","flo.temAirNor.T","flo.temAirWes.T"}
 
 //dataNames_tmp=DymolaCommands.Trajectories.readTrajectoryNames("dsres1.mat");

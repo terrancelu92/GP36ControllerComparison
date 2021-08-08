@@ -63,7 +63,7 @@ protected
                         name="TAirTotDev.y",
                         active=true,
                         usage=Optimization.Internal.Version.V22.Types.CriterionUsage.Minimize,
-                        demand=2E-05,
+                        demand=4E-05,
                         unit="")},
             preferences=
                 Optimization.Internal.Version.V22.Preferences(
